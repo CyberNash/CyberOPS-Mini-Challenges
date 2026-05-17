@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Crash Report</title>
+
+<style>
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #0b0f1a, #111827);
+    font-family: monospace;
+    color: #22c55e;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 520px;
+    background: #0f172a;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+h2 {
+    color: #38bdf8;
+    font-size: 14px;
+}
+
+.badge {
+    font-size: 11px;
+    color: #fbbf24;
+    margin-bottom: 10px;
+}
+
+.box {
+    background: #111827;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    word-break: break-word;
+    line-height: 1.6;
+    color: #22c55e;
+}
+
+.glitch {
+    color: #ef4444;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🎮 GAME DEBUG CONSOLE</h2>
+
+<div class="badge">
+Beta Build v0.9.7 — crash report generated
+</div>
+
+<div class="glitch">
+⚠ SYSTEM ERROR: UNKNOWN MEMORY CORRUPTION DETECTED
+</div>
+
+<div class="box">
+[MEMORY_DUMP_START]<br><br>
+
+01010011 01001101 01001011 01000010 01000010 01010011 01111011 01000010 00110001 01001110 00110100 01010010 01011001 01011111 01010101 01001110 01001100 00110000 01000011 01001011 00110011 01000100 01111101
+
+<br><br>[MEMORY_DUMP_END]
+</div>
+
+<p style="font-size:11px;color:#94a3b8;margin-top:10px;">
+Hint: Developers sometimes hide messages inside binary crash logs...
+</p>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Play Store</title>
+
+<style>
+body {
+    margin: 0;
+    background: #f1f3f4;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.store {
+    width: 92%;
+    max-width: 380px;
+    background: white;
+    margin: 20px 0;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #5f6368;
+    margin-bottom: 10px;
+}
+
+/* app row */
+.app {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.g1 { background: #22c55e; }
+.g2 { background: #3b82f6; }
+.g3 { background: #ef4444; }
+.g4 { background: #a855f7; }
+.g5 { background: #f59e0b; }
+
+.name {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.dev {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.meta {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+/* update button */
+.update-btn {
+    margin-left: auto;
+    font-size: 11px;
+    background: #1a73e8;
+    color: white;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* progress */
+.progress {
+    margin-top: 10px;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    display: none;
+}
+
+.bar {
+    height: 100%;
+    width: 0%;
+    background: #1a73e8;
+}
+
+.status {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 10px;
+    color: #555;
+}
+
+.result {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: #ef4444;
+    display: none;
+}
+
+.flag {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #22c55e;
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="store">
+
+<div class="top">
+    <span>Google Play</span>
+    <span>Search 🔍</span>
+</div>
+
+<!-- Apps -->
+
+<div class="app">
+    <div class="icon g1">W</div>
+    <div>
+        <div class="name">WhatsClone</div>
+        <div class="dev">Meta Studio</div>
+        <div class="meta">4.2 ★ • 10M+ downloads</div>
+    </div>
+    <div class="update-btn" onclick="updateApp('other')">UPDATE</div>
+</div>
+
+<div class="app">
+    <div class="icon g2">N</div>
+    <div>
+        <div class="name">NoteSync Pro</div>
+        <div class="dev">Simple Tools Inc</div>
+        <div class="meta">4.6 ★ • 5M+ downloads</div>
+    </div>
+    <div class="update-btn" onclick="updateApp('other')">UPDATE</div>
+</div>
+
+<div class="app">
+    <div class="icon g3">S</div>
+    <div>
+        <div class="name">Secure VPN Lite</div>
+        <div class="dev">NetShield</div>
+        <div class="meta">4.1 ★ • 1M+ downloads</div>
+    </div>
+    <div class="update-btn" onclick="updateApp('other')">UPDATE</div>
+</div>
+
+<!-- TARGET APP (NOT OBVIOUS NAME) -->
+<div class="app">
+    <div class="icon g5">N</div>
+    <div>
+        <div class="name">NovaShare</div>
+        <div class="dev">CyberOPS Studio</div>
+        <div class="meta">4.8 ★ • 2M+ downloads</div>
+    </div>
+    <div class="update-btn" onclick="updateApp('target')">UPDATE</div>
+</div>
+
+<div class="app">
+    <div class="icon g2">C</div>
+    <div>
+        <div class="name">Cleaner Boost</div>
+        <div class="dev">System Tools</div>
+        <div class="meta">4.0 ★ • 2M+ downloads</div>
+    </div>
+    <div class="update-btn" onclick="updateApp('other')">UPDATE</div>
+</div>
+
+<!-- UI -->
+<div class="progress" id="progress">
+    <div class="bar" id="bar"></div>
+</div>
+
+<div class="status" id="status"></div>
+
+<div class="result" id="result">
+Ops, update completed but no useful changes found. Try another app.
+</div>
+
+<div class="flag" id="flag">
+ACCESS GRANTED: SMKBBS{5Y5T3M_P4TCH_C0NF1RM3D}
+</div>
+
+</div>
+
+<script>
+function updateApp(type) {
+    let p = 0;
+
+    document.getElementById("progress").style.display = "block";
+    document.getElementById("result").style.display = "none";
+    document.getElementById("flag").style.display = "none";
+
+    document.getElementById("status").innerText = "Updating application...";
+
+    let interval = setInterval(() => {
+        p += 1;
+        document.getElementById("bar").style.width = p + "%";
+
+        if (p === 30) {
+            document.getElementById("status").innerText = "Downloading update...";
+        }
+
+        if (p === 70) {
+            document.getElementById("status").innerText = "Installing components...";
+        }
+
+        if (p >= 100) {
+            clearInterval(interval);
+
+            if (type === "target") {
+                document.getElementById("status").innerText = "Update completed";
+                document.getElementById("flag").style.display = "block";
+            } else {
+                document.getElementById("status").innerText = "Update completed";
+                document.getElementById("result").style.display = "block";
+            }
+        }
+    }, 300); // ~30 seconds feel
+}
+</script>
+
+</body>
+</html>

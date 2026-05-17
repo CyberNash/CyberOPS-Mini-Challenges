@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CyberOPS Signal Recovery Terminal</title>
+
+<style>
+body {
+    margin: 0;
+    background: #050814;
+    font-family: monospace;
+    color: #22c55e;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    background: #0f172a;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+h2 {
+    color: #38bdf8;
+    font-size: 14px;
+}
+
+.panel {
+    background: #111827;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+.fragment {
+    font-size: 12px;
+    word-break: break-all;
+    color: #22c55e;
+    margin-top: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: none;
+    background: #0b1220;
+    color: white;
+}
+
+button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #3b82f6;
+    color: white;
+    cursor: pointer;
+}
+
+.log {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #fbbf24;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🛰 CYBEROPS SIGNAL RECOVERY TERMINAL</h2>
+
+<div class="panel">
+MISSION: Restore corrupted satellite transmission
+</div>
+
+<div class="panel">
+📡 SIGNAL FRAGMENT A (Base64 Layer)
+<div class="fragment">
+U1dGQ0pYV1pZV1pZV0dGSlhXWVdHSlpYWVdGSlhYV1pYV1c=
+</div>
+</div>
+
+<div class="panel">
+🔐 INPUT DECRYPTED MESSAGE
+<input id="answer" placeholder="Enter recovered flag">
+<button onclick="check()">SUBMIT</button>
+</div>
+
+<div class="log" id="log"></div>
+
+</div>
+
+<script>
+function check(){
+    let ans = document.getElementById("answer").value;
+
+    if(ans === "SMKBBS{MULTILAYER_SIGNAL_RECOVERED}"){
+        document.getElementById("log").innerHTML =
+        "🎉 SIGNAL RESTORED SUCCESSFULLY\nMISSION COMPLETE";
+    } else {
+        document.getElementById("log").innerHTML =
+        "❌ DECRYPTION FAILED\nTry analyzing signal layers again.";
+    }
+}
+</script>
+
+</body>
+</html>
