@@ -1,5 +1,6 @@
 let isUpdating = false;
 
+// load flag from external JSON
 async function getData(){
     const res = await fetch("./api/data.json");
     return await res.json();
@@ -23,58 +24,55 @@ function updateApp(type, btn){
     result.style.display = "none";
     flag.style.display = "none";
 
-    // 🔥 FORCE UI UPDATE (IMPORTANT FIX)
+    // 🔥 FORCE INITIAL RENDER
     status.innerText = "Updating...";
-    status.style.display = "block";
 
-    let appName = btn.closest(".app").querySelector(".name").innerText;
+    setTimeout(() => {
 
-    let p = 0;
+        let appName = btn.closest(".app").querySelector(".name").innerText;
+        status.innerText = "Updating " + appName + "...";
 
-    let interval = setInterval(async () => {
+        let p = 0;
 
-        p++;
-        bar.style.width = p + "%";
+        let interval = setInterval(async () => {
 
-        if(p === 1){
-            // force repaint (fix “not showing Updating...” bug)
-            status.innerText = "Updating " + appName + "...";
-        }
+            p++;
+            bar.style.width = p + "%";
 
-        if(p === 30){
-            status.innerText = "Downloading update...";
-        }
-
-        if(p === 70){
-            status.innerText = "Installing components...";
-        }
-
-        if(p >= 100){
-            clearInterval(interval);
-
-            let data = await getData();
-
-            status.innerText = "Update completed";
-
-            // ✅ DISABLE BUTTON (FIXED RELIABLE WAY)
-            btn.classList.add("disabled");
-            btn.innerText = "UPDATED";
-
-            // extra safety
-            btn.style.background = "#9ca3af";
-            btn.style.pointerEvents = "none";
-            btn.style.opacity = "0.5";
-
-            if(type === "target"){
-                flag.style.display = "block";
-                flag.innerText = "ACCESS GRANTED: " + data.flag;
-            } else {
-                result.style.display = "block";
-                result.innerText = "Ops, no useful changes found.";
+            if(p === 30){
+                status.innerText = "Downloading update...";
             }
 
-            isUpdating = false;
-        }
+            if(p === 70){
+                status.innerText = "Installing components...";
+            }
 
-    }, 30);
+            if(p >= 100){
+                clearInterval(interval);
+
+                let data = await getData();
+
+                status.innerText = "Update completed";
+
+                // disable button safely
+                btn.classList.add("disabled");
+                btn.innerText = "UPDATED";
+                btn.style.background = "#9ca3af";
+                btn.style.pointerEvents = "none";
+                btn.style.opacity = "0.5";
+
+                if(type === "target"){
+                    flag.style.display = "block";
+                    flag.innerText = "ACCESS GRANTED: " + data.flag;
+                } else {
+                    result.style.display = "block";
+                    result.innerText = "Ops, no useful changes found.";
+                }
+
+                isUpdating = false;
+            }
+
+        }, 30);
+
+    }, 50);
 }
