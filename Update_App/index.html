@@ -69,13 +69,15 @@ body {
     border-radius: 6px;
     cursor: pointer;
     user-select: none;
+    transition: 0.2s;
 }
 
-/* DISABLED STATE */
+/* FORCE OVERRIDE */
 .update-btn.disabled {
     background: #9ca3af !important;
-    opacity: 0.5;
-    pointer-events: none;
+    color: #fff !important;
+    opacity: 0.5 !important;
+    pointer-events: none !important;
 }
 
 .progress {
