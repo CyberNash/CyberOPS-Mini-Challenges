@@ -18,11 +18,12 @@ function updateApp(type, btn){
     const progress = document.getElementById("progress");
 
     progress.style.display = "block";
-
     bar.style.width = "0%";
+
     result.style.display = "none";
     flag.style.display = "none";
 
+    status.style.display = "block";
     status.innerText = "Updating...";
 
     const duration = 120000; // 2 minutes
@@ -35,16 +36,20 @@ function updateApp(type, btn){
 
         bar.style.width = percent + "%";
 
-        if(percent > 5 && percent < 10){
+        if(percent > 5 && percent < 15){
             status.innerText = "Updating system...";
         }
 
-        if(percent > 10 && percent < 50){
+        if(percent >= 15 && percent < 60){
             status.innerText = "Downloading update...";
         }
 
-        ifpercent > 50 && percent < 90){
+        if(percent >= 60 && percent < 90){
             status.innerText = "Installing components...";
+        }
+
+        if(percent >= 90 && percent < 100){
+            status.innerText = "Finalizing patch...";
         }
 
         if(percent >= 100){
@@ -53,9 +58,10 @@ function updateApp(type, btn){
 
             btn.classList.add("disabled");
             btn.innerText = "UPDATED";
+
+            btn.style.background = "#9ca3af";
             btn.style.pointerEvents = "none";
             btn.style.opacity = "0.5";
-            btn.style.background = "#9ca3af";
 
             getData().then(data => {
 
