@@ -1,7 +1,13 @@
 let number = "";
 
+// keypad
 function add(n){
     number += n;
+    document.getElementById("display").innerText = number;
+}
+
+function clearNum(){
+    number = number.slice(0,-1);
     document.getElementById("display").innerText = number;
 }
 
@@ -10,18 +16,24 @@ async function call(){
     document.getElementById("result").innerText =
         "Connecting to CyberOPS server...";
 
-    let res = await fetch("./api/data.json");
-    let data = await res.json();
+    try {
+        let res = await fetch("./api/data.json");
+        let data = await res.json();
 
-    setTimeout(() => {
+        setTimeout(() => {
 
-        if(data[number]){
-            document.getElementById("result").innerText =
-                "CALL CONNECTED\nFLAG: " + data[number];
-        } else {
-            document.getElementById("result").innerText =
-                "❌ Call Declined";
-        }
+            if(data[number]){
+                document.getElementById("result").innerText =
+                    "CALL CONNECTED\nFLAG: " + data[number];
+            } else {
+                document.getElementById("result").innerText =
+                    "❌ Call Declined";
+            }
 
-    }, 1000);
+        }, 1000);
+
+    } catch(e){
+        document.getElementById("result").innerText =
+            "Server error";
+    }
 }
