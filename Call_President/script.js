@@ -1,24 +1,26 @@
 let number = "";
 
-// update UI safely
+// always update display safely
 function updateDisplay(){
     document.getElementById("display").innerText =
-        number.length ? number : "";
+        number === "" ? "" : number;
 }
 
-// keypad input
+// add number
 function add(n){
     number += n;
     updateDisplay();
 }
 
-// delete fix
+// FIXED delete function
 function clearNum(){
-    number = number.slice(0, -1);
+    if(number.length > 0){
+        number = number.slice(0, -1);
+    }
     updateDisplay();
 }
 
-// fake API call (GitHub Pages compatible)
+// call function (unchanged)
 async function call(){
 
     document.getElementById("result").innerText =
