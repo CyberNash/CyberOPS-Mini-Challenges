@@ -17,76 +17,59 @@ function updateApp(type, btn){
     const flag = document.getElementById("flag");
     const progress = document.getElementById("progress");
 
-    // safety check (VERY IMPORTANT)
-    if(!status){
-        alert("ERROR: status element not found in HTML");
-        isUpdating = false;
-        return;
-    }
-
     progress.style.display = "block";
     bar.style.width = "0%";
 
     result.style.display = "none";
     flag.style.display = "none";
 
-    // 🔥 FORCE FIRST RENDER
-    status.style.display = "block";
     status.innerText = "Updating...";
 
-    // FORCE BROWSER PAINT BEFORE LOOP
-    requestAnimationFrame(() => {
+    let p = 0;
 
-        setTimeout(() => {
+    // 2 minutes = 120 seconds
+    // 120 seconds × 10 steps = 12 sec per step (smooth fake progress)
+    let interval = setInterval(async () => {
 
-            let appName = btn.closest(".app").querySelector(".name").innerText;
+        p += 1;
+        bar.style.width = p + "%";
 
-            status.innerText = "Updating " + appName + "...";
+        if(p === 10){
+            status.innerText = "Downloading update...";
+        }
 
-            let p = 0;
+        if(p === 50){
+            status.innerText = "Installing components...";
+        }
 
-            let interval = setInterval(async () => {
+        if(p === 90){
+            status.innerText = "Finalizing system patch...";
+        }
 
-                p++;
-                bar.style.width = p + "%";
+        if(p >= 100){
+            clearInterval(interval);
 
-                if(p === 30){
-                    status.innerText = "Downloading update...";
-                }
+            let data = await getData();
 
-                if(p === 70){
-                    status.innerText = "Installing components...";
-                }
+            status.innerText = "Update completed";
 
-                if(p >= 100){
-                    clearInterval(interval);
+            // disable button
+            btn.classList.add("disabled");
+            btn.innerText = "UPDATED";
+            btn.style.pointerEvents = "none";
+            btn.style.opacity = "0.5";
+            btn.style.background = "#9ca3af";
 
-                    let data = await getData();
+            if(type === "target"){
+                flag.style.display = "block";
+                flag.innerText = "BUG FIXED: " + data.flag;
+            } else {
+                result.style.display = "block";
+                result.innerText = "Ops, no useful changes found.";
+            }
 
-                    status.innerText = "Update completed";
+            isUpdating = false;
+        }
 
-                    // disable button
-                    btn.classList.add("disabled");
-                    btn.innerText = "UPDATED";
-
-                    btn.style.pointerEvents = "none";
-                    btn.style.opacity = "0.5";
-                    btn.style.background = "#9ca3af";
-
-                    if(type === "target"){
-                        flag.style.display = "block";
-                        flag.innerText = "BUG FIXED: " + data.flag;
-                    } else {
-                        result.style.display = "block";
-                        result.innerText = "Ops, no useful changes found.";
-                    }
-
-                    isUpdating = false;
-                }
-
-            }, 30);
-
-        }, 50);
-
-    });
+    }, 1200); // 🔥 slow interval = ~2 minutes total
 }
