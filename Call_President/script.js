@@ -1,16 +1,24 @@
 let number = "";
 
-// keypad
+// update UI safely
+function updateDisplay(){
+    document.getElementById("display").innerText =
+        number.length ? number : "";
+}
+
+// keypad input
 function add(n){
     number += n;
-    document.getElementById("display").innerText = number;
+    updateDisplay();
 }
 
+// delete fix
 function clearNum(){
-    number = number.slice(0,-1);
-    document.getElementById("display").innerText = number;
+    number = number.slice(0, -1);
+    updateDisplay();
 }
 
+// fake API call (GitHub Pages compatible)
 async function call(){
 
     document.getElementById("result").innerText =
