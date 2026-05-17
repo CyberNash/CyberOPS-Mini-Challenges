@@ -1,33 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WhatsApp Call CTF</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #075e54;
+    font-family: Arial;
+}
+
+.call {
+    width: 92%;
+    max-width: 360px;
+    background: linear-gradient(#075e54, #054d44);
+    border-radius: 25px;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.5);
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    background: #0f172a;
+    border-radius: 50%;
+    margin: 15px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 26px;
+}
+
+.display {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    letter-spacing: 2px;
+    min-height: 20px;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.key {
+    padding: 12px;
+    background: #0f172a;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.callbtn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    background: #25d366;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.result {
+    margin-top: 10px;
+    min-height: 20px;
+}
+
+.hint {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 10px;
+}
+</style>
 </head>
 
-<body style="background:#075e54;color:white;text-align:center;font-family:Arial">
+<body>
 
-<h2>CyberOPS Call</h2>
+<div class="call">
 
-<div id="display"></div>
+<div class="avatar">👤</div>
+<div>CyberOPS President</div>
 
-<br>
+<div class="display" id="display"></div>
 
-<button onclick="add('0')">0</button>
-<button onclick="add('1')">1</button>
-<button onclick="add('2')">2</button>
-<button onclick="add('3')">3</button>
-<button onclick="add('4')">4</button>
-<button onclick="add('5')">5</button>
-<button onclick="add('6')">6</button>
-<button onclick="add('7')">7</button>
-<button onclick="add('8')">8</button>
-<button onclick="add('9')">9</button>
+<div class="keypad">
+<div class="key" onclick="add('1')">1</div>
+<div class="key" onclick="add('2')">2</div>
+<div class="key" onclick="add('3')">3</div>
+<div class="key" onclick="add('4')">4</div>
+<div class="key" onclick="add('5')">5</div>
+<div class="key" onclick="add('6')">6</div>
+<div class="key" onclick="add('7')">7</div>
+<div class="key" onclick="add('8')">8</div>
+<div class="key" onclick="add('9')">9</div>
+<div class="key" onclick="clearNum()">⌫</div>
+<div class="key" onclick="add('0')">0</div>
+<div class="key">*</div>
+</div>
 
-<br><br>
+<button class="callbtn" onclick="call()">📞 CALL</button>
 
-<button onclick="call()">CALL</button>
+<div class="result" id="result"></div>
 
-<p id="result"></p>
+<div class="hint">
+Hint: Only CyberOPS trusted number connects.
+</div>
+
+</div>
 
 <script src="script.js"></script>
 
