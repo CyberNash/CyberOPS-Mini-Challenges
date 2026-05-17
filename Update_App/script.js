@@ -1,6 +1,5 @@
 let isUpdating = false;
 
-// load flag from JSON
 async function getData(){
     const res = await fetch("./api/data.json");
     return await res.json();
@@ -16,14 +15,19 @@ function updateApp(type, btn){
     const status = document.getElementById("status");
     const result = document.getElementById("result");
     const flag = document.getElementById("flag");
+    const progress = document.getElementById("progress");
 
+    progress.style.display = "block";
     bar.style.width = "0%";
 
-    document.getElementById("progress").style.display = "block";
     result.style.display = "none";
     flag.style.display = "none";
 
+    // 🔥 FORCE UI UPDATE (IMPORTANT FIX)
     status.innerText = "Updating...";
+    status.style.display = "block";
+
+    let appName = btn.closest(".app").querySelector(".name").innerText;
 
     let p = 0;
 
@@ -31,6 +35,11 @@ function updateApp(type, btn){
 
         p++;
         bar.style.width = p + "%";
+
+        if(p === 1){
+            // force repaint (fix “not showing Updating...” bug)
+            status.innerText = "Updating " + appName + "...";
+        }
 
         if(p === 30){
             status.innerText = "Downloading update...";
@@ -47,9 +56,14 @@ function updateApp(type, btn){
 
             status.innerText = "Update completed";
 
-            // disable button
+            // ✅ DISABLE BUTTON (FIXED RELIABLE WAY)
             btn.classList.add("disabled");
             btn.innerText = "UPDATED";
+
+            // extra safety
+            btn.style.background = "#9ca3af";
+            btn.style.pointerEvents = "none";
+            btn.style.opacity = "0.5";
 
             if(type === "target"){
                 flag.style.display = "block";
@@ -62,5 +76,5 @@ function updateApp(type, btn){
             isUpdating = false;
         }
 
-    }, 50);
+    }, 30);
 }
