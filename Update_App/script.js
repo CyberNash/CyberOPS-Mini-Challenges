@@ -25,54 +25,56 @@ function updateApp(type, btn){
 
     status.innerText = "Updating...";
 
-    let duration = 120000; // 🔥 2 minutes in ms
-    let start = Date.now();
+    const duration = 120000; // 2 minutes
+    const start = performance.now();
 
-    let interval = setInterval(async () => {
+    function animate(now){
 
-        let elapsed = Date.now() - start;
-        let percent = Math.floor((elapsed / duration) * 100);
+        let elapsed = now - start;
+        let percent = Math.min((elapsed / duration) * 100, 100);
 
         bar.style.width = percent + "%";
 
-        if(percent === 10){
+        if(percent > 5 && percent < 10){
+            status.innerText = "Updating system...";
+        }
+
+        if(percent > 10 && percent < 50){
             status.innerText = "Downloading update...";
         }
 
-        if(percent === 50){
+        ifpercent > 50 && percent < 90){
             status.innerText = "Installing components...";
         }
 
-        if(percent === 90){
-            status.innerText = "Finalizing system patch...";
-        }
-
         if(percent >= 100){
-            clearInterval(interval);
-
-            bar.style.width = "100%";
-
-            let data = await getData();
 
             status.innerText = "Update completed";
 
-            // disable button
             btn.classList.add("disabled");
             btn.innerText = "UPDATED";
             btn.style.pointerEvents = "none";
             btn.style.opacity = "0.5";
             btn.style.background = "#9ca3af";
 
-            if(type === "target"){
-                flag.style.display = "block";
-                flag.innerText = "BUG FIXED: " + data.flag;
-            } else {
-                result.style.display = "block";
-                result.innerText = "Ops, no useful changes found.";
-            }
+            getData().then(data => {
 
-            isUpdating = false;
+                if(type === "target"){
+                    flag.style.display = "block";
+                    flag.innerText = "BUG FIXED: " + data.flag;
+                } else {
+                    result.style.display = "block";
+                    result.innerText = "Ops, no useful changes found.";
+                }
+
+                isUpdating = false;
+            });
+
+            return;
         }
 
-    }, 200); // smooth update check
+        requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
 }
