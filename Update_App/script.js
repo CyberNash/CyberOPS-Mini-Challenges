@@ -8,8 +8,13 @@ async function loadData(){
 }
 
 function updateApp(type, btn){
+
     queue.push({type, btn});
-    processQueue();
+
+    // FORCE START PROCESSING
+    if(!isUpdating){
+        processQueue();
+    }
 }
 
 async function processQueue(){
