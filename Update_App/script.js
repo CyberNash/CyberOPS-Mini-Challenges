@@ -18,36 +18,39 @@ function updateApp(type, btn){
     const progress = document.getElementById("progress");
 
     progress.style.display = "block";
-    bar.style.width = "0%";
 
+    bar.style.width = "0%";
     result.style.display = "none";
     flag.style.display = "none";
 
     status.innerText = "Updating...";
 
-    let p = 0;
+    let duration = 120000; // 🔥 2 minutes in ms
+    let start = Date.now();
 
-    // 2 minutes = 120 seconds
-    // 120 seconds × 10 steps = 12 sec per step (smooth fake progress)
     let interval = setInterval(async () => {
 
-        p += 1;
-        bar.style.width = p + "%";
+        let elapsed = Date.now() - start;
+        let percent = Math.floor((elapsed / duration) * 100);
 
-        if(p === 10){
+        bar.style.width = percent + "%";
+
+        if(percent === 10){
             status.innerText = "Downloading update...";
         }
 
-        if(p === 50){
+        if(percent === 50){
             status.innerText = "Installing components...";
         }
 
-        if(p === 90){
+        if(percent === 90){
             status.innerText = "Finalizing system patch...";
         }
 
-        if(p >= 100){
+        if(percent >= 100){
             clearInterval(interval);
+
+            bar.style.width = "100%";
 
             let data = await getData();
 
@@ -71,5 +74,5 @@ function updateApp(type, btn){
             isUpdating = false;
         }
 
-    }, 1200); // 🔥 slow interval = ~2 minutes total
+    }, 200); // smooth update check
 }
