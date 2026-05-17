@@ -8,7 +8,7 @@ async function getData(){
 
 function updateApp(type, btn){
 
-    if(isUpdating) return;
+    if(isUpdating || btn.classList.contains("disabled")) return;
 
     isUpdating = true;
 
@@ -47,10 +47,8 @@ function updateApp(type, btn){
 
             status.innerText = "Update completed";
 
-            // disable button AFTER update
-            btn.style.background = "#9ca3af";
-            btn.style.pointerEvents = "none";
-            btn.style.opacity = "0.5";
+            // disable button
+            btn.classList.add("disabled");
             btn.innerText = "UPDATED";
 
             if(type === "target"){
