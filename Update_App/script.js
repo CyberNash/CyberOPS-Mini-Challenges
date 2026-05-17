@@ -1,6 +1,5 @@
 let isUpdating = false;
 
-// load flag from external JSON
 async function getData(){
     const res = await fetch("./api/data.json");
     return await res.json();
@@ -18,61 +17,76 @@ function updateApp(type, btn){
     const flag = document.getElementById("flag");
     const progress = document.getElementById("progress");
 
+    // safety check (VERY IMPORTANT)
+    if(!status){
+        alert("ERROR: status element not found in HTML");
+        isUpdating = false;
+        return;
+    }
+
     progress.style.display = "block";
     bar.style.width = "0%";
 
     result.style.display = "none";
     flag.style.display = "none";
 
-    // 🔥 FORCE INITIAL RENDER
+    // 🔥 FORCE FIRST RENDER
+    status.style.display = "block";
     status.innerText = "Updating...";
 
-    setTimeout(() => {
+    // FORCE BROWSER PAINT BEFORE LOOP
+    requestAnimationFrame(() => {
 
-        let appName = btn.closest(".app").querySelector(".name").innerText;
-        status.innerText = "Updating " + appName + "...";
+        setTimeout(() => {
 
-        let p = 0;
+            let appName = btn.closest(".app").querySelector(".name").innerText;
 
-        let interval = setInterval(async () => {
+            status.innerText = "Updating " + appName + "...";
 
-            p++;
-            bar.style.width = p + "%";
+            let p = 0;
 
-            if(p === 30){
-                status.innerText = "Downloading update...";
-            }
+            let interval = setInterval(async () => {
 
-            if(p === 70){
-                status.innerText = "Installing components...";
-            }
+                p++;
+                bar.style.width = p + "%";
 
-            if(p >= 100){
-                clearInterval(interval);
-
-                let data = await getData();
-
-                status.innerText = "Update completed";
-
-                // disable button safely
-                btn.classList.add("disabled");
-                btn.innerText = "UPDATED";
-                btn.style.background = "#9ca3af";
-                btn.style.pointerEvents = "none";
-                btn.style.opacity = "0.5";
-
-                if(type === "target"){
-                    flag.style.display = "block";
-                    flag.innerText = "ACCESS GRANTED: " + data.flag;
-                } else {
-                    result.style.display = "block";
-                    result.innerText = "Ops, no useful changes found.";
+                if(p === 30){
+                    status.innerText = "Downloading update...";
                 }
 
-                isUpdating = false;
-            }
+                if(p === 70){
+                    status.innerText = "Installing components...";
+                }
 
-        }, 30);
+                if(p >= 100){
+                    clearInterval(interval);
 
-    }, 50);
+                    let data = await getData();
+
+                    status.innerText = "Update completed";
+
+                    // disable button
+                    btn.classList.add("disabled");
+                    btn.innerText = "UPDATED";
+
+                    btn.style.pointerEvents = "none";
+                    btn.style.opacity = "0.5";
+                    btn.style.background = "#9ca3af";
+
+                    if(type === "target"){
+                        flag.style.display = "block";
+                        flag.innerText = "ACCESS GRANTED: " + data.flag;
+                    } else {
+                        result.style.display = "block";
+                        result.innerText = "Ops, no useful changes found.";
+                    }
+
+                    isUpdating = false;
+                }
+
+            }, 30);
+
+        }, 50);
+
+    });
 }
