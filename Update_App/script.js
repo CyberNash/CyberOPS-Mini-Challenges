@@ -75,7 +75,7 @@ function updateApp(type, btn){
 
                     if(type === "target"){
                         flag.style.display = "block";
-                        flag.innerText = "ACCESS GRANTED: " + data.flag;
+                        flag.innerText = "BUG FIXED: " + data.flag;
                     } else {
                         result.style.display = "block";
                         result.innerText = "Ops, no useful changes found.";
