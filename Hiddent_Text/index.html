@@ -59,13 +59,17 @@ p {
     font-size: 12px;
 }
 
-/* hidden flag */
-.hidden {
-    color: #fffdf7; /* same as paper */
-    font-size: 14px;
+.hint {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
 }
 
-/* stamp */
+/* hidden from normal view but still inspectable */
+.secret {
+    display: none;
+}
+
 .stamp {
     position: absolute;
     bottom: 15px;
@@ -98,7 +102,12 @@ Reminder: Always check carefully before assuming any information is missing.
 Students are advised to review all announcements properly.
 </p>
 
-<div class="hidden">
+<p class="hint">
+Some internal notes may not be shown in the main document view.
+</p>
+
+<!-- FLAG (visible only in inspect/source, not UI) -->
+<div class="secret" id="flag">
 SMKBBS{C55_V151B1L1TY_155U3}
 </div>
 
