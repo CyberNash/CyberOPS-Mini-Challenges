@@ -79,6 +79,26 @@ function move(dir){
     if(nx>=0 && ny>=0 && nx<SIZE && ny<SIZE && !hit(nx,ny)){
         p.x = nx;
         p.y = ny;
+        
+    }
+
+    document.addEventListener("keydown", (e) => {
+
+    if(gameEnded) return;
+
+    switch(e.key){
+        case "ArrowUp":
+            move("up");
+            break;
+        case "ArrowDown":
+            move("down");
+            break;
+        case "ArrowLeft":
+            move("left");
+            break;
+        case "ArrowRight":
+            move("right");
+            break;
     }
 
     checkWin();
