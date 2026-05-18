@@ -115,7 +115,7 @@ function checkWin(){
         .then(data => {
 
             flagBox.style.display = "block";
-            flagBox.innerText = "ACCESS GRANTED: " + data.flag;
+            flagBox.innerText = "VICTORY: " + data.flag;
 
         })
         .catch(err => {
