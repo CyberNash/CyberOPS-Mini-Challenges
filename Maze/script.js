@@ -4,6 +4,7 @@ const ctx = canvas.getContext("2d");
 const SIZE = 30;
 let tile;
 
+// responsive
 function resize(){
     const size = Math.min(window.innerWidth * 0.92, 420);
     canvas.width = size;
@@ -20,7 +21,6 @@ let gameEnded = false;
 
 // player
 let p = {x:0, y:0};
-let canMove = true;
 
 // goal
 let g = {x:29, y:29};
@@ -70,20 +70,26 @@ function draw(){
 
 // 🧠 START GAME ON FIRST MOVE
 function startGame(){
-    if(gameStarted) return;
     gameStarted = true;
 }
 
-// 🚶 PLAYER MOVE (STEP LOCK)
+// 🚨 STRICT SINGLE STEP LOCK
+let moveLock = false;
+
+// MAIN MOVE FUNCTION (ALL INPUTS GO HERE)
 function movePlayer(dir){
 
     if(gameEnded) return;
 
     startGame();
 
-    if(!canMove) return;
+    // 🔥 HARD LOCK: ONLY ONE MOVE AT A TIME
+    if(moveLock) return;
 
-    let nx=p.x, ny=p.y;
+    moveLock = true;
+
+    let nx = p.x;
+    let ny = p.y;
 
     if(dir==="up") ny--;
     if(dir==="down") ny++;
@@ -91,34 +97,43 @@ function movePlayer(dir){
     if(dir==="right") nx++;
 
     if(nx>=0&&ny>=0&&nx<SIZE&&ny<SIZE&&!hit(nx,ny)){
-        p.x=nx;
-        p.y=ny;
+        p.x = nx;
+        p.y = ny;
     }
 
-    canMove = false;
-
-    setTimeout(()=> canMove = true, 120); // 🔥 STEP SPEED CONTROL
+    // unlock AFTER movement cycle (this prevents spam/teleport feel)
+    setTimeout(()=>{
+        moveLock = false;
+    }, 180);
 
     checkWin();
 }
 
-// 🏁 WIN CONDITION
+// 🏁 WIN CHECK (FORCE FIXED)
 function checkWin(){
-    if(p.x===g.x&&p.y===g.y && !gameEnded){
+
+    if(gameEnded) return;
+
+    if(p.x === g.x && p.y === g.y){
 
         gameEnded = true;
 
-        // stop enemy loop effect
+        // STOP EVERYTHING IMMEDIATELY
         clearInterval(enemyLoop);
+
+        const flagBox = document.getElementById("flag");
 
         fetch("api/flag.json")
         .then(res => res.json())
         .then(data => {
 
-            const f = document.getElementById("flag");
-            f.style.display = "block";
-            f.innerText = "ACCESS GRANTED: " + data.flag;
+            flagBox.style.display = "block";
+            flagBox.innerText = "ACCESS GRANTED: " + data.flag;
 
+        })
+        .catch(() => {
+            flagBox.style.display = "block";
+            flagBox.innerText = "ACCESS GRANTED: ERROR_LOADING_FLAG";
         });
     }
 }
@@ -131,7 +146,7 @@ document.addEventListener("keydown", (e)=>{
     if(e.key==="ArrowRight") movePlayer("right");
 });
 
-// 👾 ENEMY AI
+// 👾 ENEMY BFS
 function getNextMove(){
     let queue=[[e.x,e.y,[]]];
     let visited=new Set();
@@ -177,14 +192,14 @@ function moveEnemy(){
 
         setTimeout(()=>{
             document.getElementById("meme").style.display="none";
-        },800);
+        },700);
 
-        p={x:0,y:0};
-        e={x:26,y:28};
+        p = {x:0,y:0};
+        e = {x:26,y:28};
     }
 }
 
-// 🔁 GAME LOOP (STOPPABLE)
+// LOOP
 let enemyLoop = setInterval(()=>{
     moveEnemy();
     draw();
