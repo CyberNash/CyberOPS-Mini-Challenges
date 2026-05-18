@@ -1,41 +1,18 @@
-async function loadLogs() {
-    const res = await fetch("api/data.json");
-    const data = await res.json();
+fetch("api/data.json")
+  .then(res => res.json())
+  .then(data => {
 
-    const logBox = document.getElementById("logBox");
-    logBox.innerHTML = "";
+    // combine encoded parts
+    const combined = data.part1 + data.part2;
 
-    data.logs.forEach((line) => {
-        let output = line;
+    // decode base64
+    const flag = atob(combined);
 
-        // decode base64 if possible
-        try {
-            if (/^[A-Za-z0-9+/=]+$/.test(line)) {
-                output = atob(line);
-            }
-        } catch (e) {}
+    // show in console (CTF-style)
+    console.log("%cSYSTEM ALERT: FLAG DETECTED", "color: lime; font-size:14px;");
+    console.log(flag);
 
-        logBox.innerHTML += output + "\n";
-    });
-
-    console.log("Hint: Try pressing Ctrl + K...");
-}
-
-function revealSecret(encoded) {
-    const step1 = atob(encoded);
-    const final = atob(step1);
-
-    console.log("%cFLAG: " + final, "color: lime; font-size:14px;");
-    alert("⚠️ Check the console.");
-}
-
-window.addEventListener("keydown", async (e) => {
-    if (e.ctrlKey && e.key.toLowerCase() === "k") {
-        const res = await fetch("api/data.json");
-        const data = await res.json();
-
-        revealSecret(data.secret);
-    }
-});
-
-loadLogs();
+    // optional: show hint in page (not direct flag)
+    document.querySelector(".warn").innerText =
+      "WARN Suspicious encoded string isolated: check console logs";
+  });
