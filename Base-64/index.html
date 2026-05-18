@@ -17,6 +17,7 @@ body {
     height: 100vh;
 }
 
+/* terminal box */
 .terminal {
     width: 92%;
     max-width: 420px;
@@ -26,37 +27,61 @@ body {
     box-shadow: 0 0 20px rgba(0,0,0,0.6);
 }
 
+/* header */
 .header {
     color: #22c55e;
     margin-bottom: 10px;
     font-size: 14px;
 }
 
+/* log */
 .log {
     font-size: 12px;
     line-height: 1.6;
     white-space: pre-wrap;
 }
 
+/* colors */
 .info { color: #60a5fa; }
 .warn { color: #facc15; }
 .err  { color: #f87171; }
 .sys  { color: #34d399; }
+
 </style>
 </head>
 
 <body>
 
 <div class="terminal">
-    <div class="header">
-SYSTEM LOG VIEWER v2.4.1
-NODE: AUTH-SERVER-03
-STATUS: ONLINE
-    </div>
 
-    <div class="log" id="logBox">
-Loading logs...
-    </div>
+<div class="header">
+SYSTEM LOG VIEWER v2.4.1<br>
+NODE: AUTH-SERVER-03<br>
+STATUS: ONLINE
+</div>
+
+<div class="log">
+
+[2026-05-17 08:12:31] <span class="info">INFO</span> Service authentication module started  
+[2026-05-17 08:12:33] <span class="sys">SYS</span> Checking secure channels... OK  
+[2026-05-17 08:12:40] <span class="warn">WARN</span> Unusual encoded payload detected in packet stream  
+[2026-05-17 08:12:41] <span class="info">INFO</span> Logging raw network dump for analysis  
+
+[2026-05-17 08:12:45] <span class="sys">DUMP</span> aW5mby1wYWNrZXQtMTogc3RhYmxl  
+
+[2026-05-17 08:12:47] <span class="sys">DUMP</span> U01LQkJTe1MzUlYzUl8wRkZMMU4zXzRHNDFOfQ==  
+
+[2026-05-17 08:12:50] <span class="err">ERROR</span> Corrupted packet recovered from memory  
+
+[2026-05-17 08:12:51] <span class="sys">DUMP</span> bG9nLXNlZ21lbnQtMjogbm9ybWFs  
+
+[2026-05-17 08:12:55] <span class="warn">WARN</span> Suspicious encoded string isolated: CHECK CONSOLE OUTPUT
+
+[2026-05-17 08:12:59] <span class="info">INFO</span> Security scan complete  
+[2026-05-17 08:13:02] <span class="sys">SYS</span> No further anomalies detected  
+
+</div>
+
 </div>
 
 <script src="script.js"></script>
