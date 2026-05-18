@@ -15,10 +15,10 @@ function resize(){
 resize();
 window.addEventListener("resize", resize);
 
-// game state
+// GAME STATE
 let gameEnded = false;
 
-// entities
+// player / goal / enemy
 let p = {x:0, y:0};
 let g = {x:29, y:29};
 let e = {x:26, y:28};
@@ -43,7 +43,7 @@ function hit(x,y){
     return walls.some(w=>w.x===x&&w.y===y);
 }
 
-// draw
+// DRAW
 function draw(){
     ctx.fillStyle="#111827";
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -92,10 +92,9 @@ function checkWin(){
     if(p.x === g.x && p.y === g.y){
 
         gameEnded = true;
-
         clearInterval(loop);
 
-        fetch("api/flag.json")
+        fetch("./api/flag.json")
         .then(res => res.json())
         .then(data => {
             const f = document.getElementById("flag");
@@ -106,7 +105,7 @@ function checkWin(){
     }
 }
 
-// enemy AI (BFS)
+// ENEMY AI
 function getNextMove(){
     let queue=[[e.x,e.y,[]]];
     let visited=new Set();
@@ -136,7 +135,7 @@ function getNextMove(){
     return [0,0];
 }
 
-// enemy move
+// ENEMY MOVE
 function moveEnemy(){
 
     if(gameEnded) return;
@@ -159,16 +158,25 @@ function moveEnemy(){
     }
 }
 
-// loop
+// LOOP
 let loop = setInterval(()=>{
     moveEnemy();
     draw();
 },120);
 
-// keyboard support (PC)
-document.addEventListener("keydown", (e)=>{
+// ==========================
+// KEYBOARD FIX (THIS IS KEY)
+// ==========================
+document.body.tabIndex = 0;
+document.body.focus();
+
+document.addEventListener("keydown", function(e){
 
     if(gameEnded) return;
+
+    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)){
+        e.preventDefault();
+    }
 
     if(e.key === "ArrowUp") move("up");
     if(e.key === "ArrowDown") move("down");
