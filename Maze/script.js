@@ -63,7 +63,7 @@ function draw(){
     ctx.fillRect(p.x*tile,p.y*tile,tile,tile);
 }
 
-// MOVE PLAYER (1 STEP ONLY)
+// MOVE (1 STEP ONLY)
 function move(dir){
 
     if(gameEnded) return;
@@ -79,26 +79,6 @@ function move(dir){
     if(nx>=0 && ny>=0 && nx<SIZE && ny<SIZE && !hit(nx,ny)){
         p.x = nx;
         p.y = ny;
-        
-    }
-
-    document.addEventListener("keydown", (e) => {
-
-    if(gameEnded) return;
-
-    switch(e.key){
-        case "ArrowUp":
-            move("up");
-            break;
-        case "ArrowDown":
-            move("down");
-            break;
-        case "ArrowLeft":
-            move("left");
-            break;
-        case "ArrowRight":
-            move("right");
-            break;
     }
 
     checkWin();
@@ -126,7 +106,7 @@ function checkWin(){
     }
 }
 
-// enemy AI
+// enemy AI (BFS)
 function getNextMove(){
     let queue=[[e.x,e.y,[]]];
     let visited=new Set();
@@ -184,5 +164,16 @@ let loop = setInterval(()=>{
     moveEnemy();
     draw();
 },120);
+
+// keyboard support (PC)
+document.addEventListener("keydown", (e)=>{
+
+    if(gameEnded) return;
+
+    if(e.key === "ArrowUp") move("up");
+    if(e.key === "ArrowDown") move("down");
+    if(e.key === "ArrowLeft") move("left");
+    if(e.key === "ArrowRight") move("right");
+});
 
 draw();
