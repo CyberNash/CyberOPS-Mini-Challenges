@@ -1,13 +1,4 @@
 {
-  "logs": [
-    "[2026-05-17 08:12:31] INFO Service authentication module started",
-    "[2026-05-17 08:12:33] SYS Checking secure channels... OK",
-    "[2026-05-17 08:12:40] WARN Unusual encoded payload detected",
-    "aW5mby1wYWNrZXQtMTogc3RhYmxl",
-    "U01LQkJTe1MzUlYzUl8wRkZMMU4zXzRHNDFOfQ==",
-    "bG9nLXNlZ21lbnQtMjogbm9ybWFs",
-    "[2026-05-17 08:12:50] ERROR Corrupted packet recovered"
-  ],
-
-  "secret": "Wm14aFoyZDVjM1JsYlY5c2IyZGZZbUZ6WlRZME5IMD0="
+  "logs": [],
+  "secret": ""
 }
