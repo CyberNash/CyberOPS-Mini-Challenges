@@ -4,7 +4,6 @@ const ctx = canvas.getContext("2d");
 const SIZE = 30;
 let tile;
 
-// responsive canvas
 function resize(){
     const size = Math.min(window.innerWidth * 0.92, 420);
     canvas.width = size;
@@ -15,8 +14,13 @@ function resize(){
 resize();
 window.addEventListener("resize", resize);
 
+// GAME STATE
+let gameStarted = false;
+let gameEnded = false;
+
 // player
 let p = {x:0, y:0};
+let canMove = true;
 
 // goal
 let g = {x:29, y:29};
@@ -64,8 +68,21 @@ function draw(){
     ctx.fillRect(p.x*tile,p.y*tile,tile,tile);
 }
 
-// MOVE PLAYER
+// 🧠 START GAME ON FIRST MOVE
+function startGame(){
+    if(gameStarted) return;
+    gameStarted = true;
+}
+
+// 🚶 PLAYER MOVE (STEP LOCK)
 function movePlayer(dir){
+
+    if(gameEnded) return;
+
+    startGame();
+
+    if(!canMove) return;
+
     let nx=p.x, ny=p.y;
 
     if(dir==="up") ny--;
@@ -78,18 +95,35 @@ function movePlayer(dir){
         p.y=ny;
     }
 
-    if(p.x===g.x&&p.y===g.y){
+    canMove = false;
+
+    setTimeout(()=> canMove = true, 120); // 🔥 STEP SPEED CONTROL
+
+    checkWin();
+}
+
+// 🏁 WIN CONDITION
+function checkWin(){
+    if(p.x===g.x&&p.y===g.y && !gameEnded){
+
+        gameEnded = true;
+
+        // stop enemy loop effect
+        clearInterval(enemyLoop);
+
         fetch("api/flag.json")
         .then(res => res.json())
         .then(data => {
+
             const f = document.getElementById("flag");
             f.style.display = "block";
             f.innerText = "ACCESS GRANTED: " + data.flag;
+
         });
     }
 }
 
-// KEYBOARD (laptop)
+// ⌨️ KEYBOARD
 document.addEventListener("keydown", (e)=>{
     if(e.key==="ArrowUp") movePlayer("up");
     if(e.key==="ArrowDown") movePlayer("down");
@@ -97,7 +131,7 @@ document.addEventListener("keydown", (e)=>{
     if(e.key==="ArrowRight") movePlayer("right");
 });
 
-// ENEMY BFS
+// 👾 ENEMY AI
 function getNextMove(){
     let queue=[[e.x,e.y,[]]];
     let visited=new Set();
@@ -127,14 +161,18 @@ function getNextMove(){
     return [0,0];
 }
 
-// ENEMY MOVE
+// 💀 ENEMY MOVE
 function moveEnemy(){
+
+    if(gameEnded) return;
+
     let step = getNextMove();
 
     e.x += step[0];
     e.y += step[1];
 
     if(e.x===p.x && e.y===p.y){
+
         document.getElementById("meme").style.display="block";
 
         setTimeout(()=>{
@@ -146,58 +184,10 @@ function moveEnemy(){
     }
 }
 
-// LOOP
-setInterval(()=>{
+// 🔁 GAME LOOP (STOPPABLE)
+let enemyLoop = setInterval(()=>{
     moveEnemy();
     draw();
-},100);
-
-// JOYSTICK (mobile + pointer universal)
-const joystick = document.getElementById("joystick");
-const stick = document.getElementById("stick");
-
-let dragging=false;
-let center={x:60,y:60};
-
-joystick.addEventListener("pointerdown", ()=>dragging=true);
-joystick.addEventListener("pointerup", end);
-joystick.addEventListener("pointercancel", end);
-joystick.addEventListener("pointermove", move);
-
-function end(){
-    dragging=false;
-    stick.style.left="35px";
-    stick.style.top="35px";
-}
-
-function move(e){
-    if(!dragging) return;
-
-    let rect = joystick.getBoundingClientRect();
-    let x = e.clientX - rect.left;
-    let y = e.clientY - rect.top;
-
-    let dx = x - center.x;
-    let dy = y - center.y;
-
-    let dist = Math.min(40, Math.hypot(dx,dy));
-    let angle = Math.atan2(dy,dx);
-
-    let sx = Math.cos(angle)*dist;
-    let sy = Math.sin(angle)*dist;
-
-    stick.style.left = 35 + sx + "px";
-    stick.style.top = 35 + sy + "px";
-
-    let dir;
-
-    if(Math.abs(sx) > Math.abs(sy)){
-        dir = sx > 10 ? "right" : "left";
-    } else {
-        dir = sy > 10 ? "down" : "up";
-    }
-
-    movePlayer(dir);
-}
+},120);
 
 draw();
