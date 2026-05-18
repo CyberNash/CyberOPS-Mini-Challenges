@@ -16,8 +16,6 @@ body {
     flex-direction: column;
     font-family: Arial;
     color: white;
-    overflow: hidden;
-    touch-action: none;
 }
 
 canvas {
@@ -28,48 +26,41 @@ canvas {
     max-height: 60vh;
 }
 
-/* JOYSTICK */
-.joystick-area {
+/* controls */
+.controls {
     margin-top: 15px;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    gap: 10px;
     justify-content: center;
 }
 
-.joystick {
-    width: 120px;
-    height: 120px;
+button {
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 10px;
     background: #1f2937;
-    border-radius: 50%;
-    position: relative;
-    touch-action: none;
+    color: white;
+    font-size: 18px;
 }
 
-.stick {
-    width: 50px;
-    height: 50px;
-    background: #3b82f6;
-    border-radius: 50%;
-    position: absolute;
-    top: 35px;
-    left: 35px;
+button:active {
+    transform: scale(0.95);
 }
 
-/* FLAG */
 .flag {
     margin-top: 10px;
     color: #22c55e;
     display: none;
-    font-size: 16px;
     text-align: center;
 }
 
-/* MEME */
 .meme {
     position: absolute;
-    font-size: 26px;
+    font-size: 24px;
     color: yellow;
     display: none;
-    text-align: center;
 }
 </style>
 </head>
@@ -78,10 +69,14 @@ canvas {
 
 <canvas id="c"></canvas>
 
-<div class="joystick-area">
-    <div class="joystick" id="joystick">
-        <div class="stick" id="stick"></div>
-    </div>
+<div class="controls">
+    <div></div>
+    <button onclick="move('up')">⬆</button>
+    <div></div>
+
+    <button onclick="move('left')">⬅</button>
+    <button onclick="move('down')">⬇</button>
+    <button onclick="move('right')">➡</button>
 </div>
 
 <div class="flag" id="flag"></div>
