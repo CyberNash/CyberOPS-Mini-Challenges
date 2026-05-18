@@ -16,39 +16,54 @@ body {
     flex-direction: column;
     font-family: Arial;
     color: white;
+    overflow: hidden;
+    touch-action: none;
 }
 
 canvas {
     background: #111827;
     border: 2px solid #1f2937;
     image-rendering: pixelated;
+    max-width: 95vw;
+    max-height: 60vh;
 }
 
-.controls {
-    margin-top: 10px;
-    display: grid;
-    grid-template-columns: repeat(3, 60px);
-    gap: 8px;
+/* JOYSTICK */
+.joystick-area {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
 }
 
-button {
-    width: 60px;
-    height: 60px;
-    border: none;
-    border-radius: 10px;
+.joystick {
+    width: 120px;
+    height: 120px;
     background: #1f2937;
-    color: white;
-    font-size: 18px;
+    border-radius: 50%;
+    position: relative;
+    touch-action: none;
 }
 
-button:active { transform: scale(0.95); }
+.stick {
+    width: 50px;
+    height: 50px;
+    background: #3b82f6;
+    border-radius: 50%;
+    position: absolute;
+    top: 35px;
+    left: 35px;
+}
 
+/* FLAG */
 .flag {
     margin-top: 10px;
     color: #22c55e;
     display: none;
+    font-size: 16px;
+    text-align: center;
 }
 
+/* MEME */
 .meme {
     position: absolute;
     font-size: 26px;
@@ -61,175 +76,18 @@ button:active { transform: scale(0.95); }
 
 <body>
 
-<canvas id="c" width="300" height="300"></canvas>
+<canvas id="c"></canvas>
 
-<div class="controls">
-    <div></div>
-    <button onclick="move('up')">⬆</button>
-    <div></div>
-
-    <button onclick="move('left')">⬅</button>
-    <button onclick="move('down')">⬇</button>
-    <button onclick="move('right')">➡</button>
+<div class="joystick-area">
+    <div class="joystick" id="joystick">
+        <div class="stick" id="stick"></div>
+    </div>
 </div>
 
-<div class="flag" id="flag">
-ACCESS GRANTED: SMKBBS{ESCAPE_FROM_CLOSE_THREAT}
-</div>
+<div class="flag" id="flag"></div>
+<div class="meme" id="meme">😂 TOO CLOSE!</div>
 
-<div class="meme" id="meme">
-😂 TOO CLOSE!
-</div>
-
-<script>
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
-
-const tile = 10;
-const SIZE = 30;
-
-// PLAYER (top-left)
-let p = {x:0, y:0};
-
-// 🎯 GOAL (bottom-right)
-let g = {x:29, y:29};
-
-// 🔴 ENEMY STARTS NEAR BOTTOM-RIGHT (danger zone)
-let e = {x:26, y:28};
-
-// =====================
-// GUARANTEED SOLVABLE MAZE
-// =====================
-let walls = [];
-
-// vertical walls
-for(let y=0;y<SIZE;y++){
-    if(y!==2 && y!==9 && y!==16 && y!==23) walls.push({x:6,y});
-    if(y!==4 && y!==11 && y!==18 && y!==25) walls.push({x:12,y});
-    if(y!==6 && y!==14 && y!==20 && y!==27) walls.push({x:18,y});
-    if(y!==3 && y!==10 && y!==19 && y!==26) walls.push({x:24,y});
-}
-
-// horizontal walls
-for(let x=0;x<SIZE;x++){
-    if(x!==5 && x!==12 && x!==19 && x!==28) walls.push({x,y:7});
-    if(x!==2 && x!==10 && x!==21 && x!==27) walls.push({x,y:15});
-    if(x!==4 && x!==13 && x!==22 && x!==29) walls.push({x,y:22});
-}
-
-function hit(x,y){
-    return walls.some(w=>w.x===x&&w.y===y);
-}
-
-// DRAW
-function draw(){
-    ctx.fillStyle="#111827";
-    ctx.fillRect(0,0,300,300);
-
-    // walls
-    ctx.fillStyle="#374151";
-    walls.forEach(w=>{
-        ctx.fillRect(w.x*tile,w.y*tile,tile,tile);
-    });
-
-    // goal
-    ctx.fillStyle="#22c55e";
-    ctx.fillRect(g.x*tile,g.y*tile,tile,tile);
-
-    // enemy (near exit pressure)
-    ctx.fillStyle="#ef4444";
-    ctx.fillRect(e.x*tile,e.y*tile,tile,tile);
-
-    // player
-    ctx.fillStyle="#3b82f6";
-    ctx.fillRect(p.x*tile,p.y*tile,tile,tile);
-}
-
-// PLAYER MOVE
-function move(dir){
-    let nx=p.x, ny=p.y;
-
-    if(dir==="up") ny--;
-    if(dir==="down") ny++;
-    if(dir==="left") nx--;
-    if(dir==="right") nx++;
-
-    if(nx>=0&&ny>=0&&nx<SIZE&&ny<SIZE&&!hit(nx,ny)){
-        p.x=nx;
-        p.y=ny;
-    }
-
-    if(p.x===g.x&&p.y===g.y){
-        document.getElementById("flag").style.display="block";
-    }
-}
-
-// =====================
-// SMART ENEMY AI (BFS)
-// =====================
-function getNextMove(){
-    let queue=[[e.x,e.y,[]]];
-    let visited=new Set();
-    visited.add(e.x+","+e.y);
-
-    let dirs=[[1,0],[-1,0],[0,1],[0,-1]];
-
-    while(queue.length){
-        let [x,y,path]=queue.shift();
-
-        if(x===p.x && y===p.y){
-            return path[0] || [0,0];
-        }
-
-        for(let d of dirs){
-            let nx=x+d[0];
-            let ny=y+d[1];
-            let key=nx+","+ny;
-
-            if(nx>=0&&ny>=0&&nx<SIZE&&ny<SIZE&&!hit(nx,ny)&&!visited.has(key)){
-                visited.add(key);
-                queue.push([nx,ny,[...path,d]]);
-            }
-        }
-    }
-
-    // fallback safety
-    if(e.x<p.x) return [1,0];
-    if(e.x>p.x) return [-1,0];
-    if(e.y<p.y) return [0,1];
-    if(e.y>p.y) return [0,-1];
-
-    return [0,0];
-}
-
-// ENEMY MOVE (FAST + PRESSURE)
-function moveEnemy(){
-    let step = getNextMove();
-
-    e.x += step[0];
-    e.y += step[1];
-
-    if(e.x===p.x && e.y===p.y){
-        document.getElementById("meme").style.display="block";
-
-        setTimeout(()=>{
-            document.getElementById("meme").style.display="none";
-        },1500);
-
-        // reset positions
-        p={x:0,y:0};
-        e={x:26,y:28};
-    }
-}
-
-// LOOP
-setInterval(()=>{
-    moveEnemy();
-    draw();
-},110); // slightly faster pressure
-
-draw();
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
