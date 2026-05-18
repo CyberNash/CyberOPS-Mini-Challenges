@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 const SIZE = 30;
 let tile;
 
-// responsive
+// responsive canvas
 function resize(){
     const size = Math.min(window.innerWidth * 0.92, 420);
     canvas.width = size;
@@ -15,17 +15,12 @@ function resize(){
 resize();
 window.addEventListener("resize", resize);
 
-// GAME STATE
-let gameStarted = false;
+// game state
 let gameEnded = false;
 
-// player
+// entities
 let p = {x:0, y:0};
-
-// goal
 let g = {x:29, y:29};
-
-// enemy
 let e = {x:26, y:28};
 
 // walls
@@ -48,7 +43,7 @@ function hit(x,y){
     return walls.some(w=>w.x===x&&w.y===y);
 }
 
-// DRAW
+// draw
 function draw(){
     ctx.fillStyle="#111827";
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -68,25 +63,10 @@ function draw(){
     ctx.fillRect(p.x*tile,p.y*tile,tile,tile);
 }
 
-// 🧠 START GAME ON FIRST MOVE
-function startGame(){
-    gameStarted = true;
-}
-
-// 🚨 STRICT SINGLE STEP LOCK
-let moveLock = false;
-
-// MAIN MOVE FUNCTION (ALL INPUTS GO HERE)
-function movePlayer(dir){
+// MOVE PLAYER (1 STEP ONLY)
+function move(dir){
 
     if(gameEnded) return;
-
-    startGame();
-
-    // 🔥 HARD LOCK: ONLY ONE MOVE AT A TIME
-    if(moveLock) return;
-
-    moveLock = true;
 
     let nx = p.x;
     let ny = p.y;
@@ -96,20 +76,15 @@ function movePlayer(dir){
     if(dir==="left") nx--;
     if(dir==="right") nx++;
 
-    if(nx>=0&&ny>=0&&nx<SIZE&&ny<SIZE&&!hit(nx,ny)){
+    if(nx>=0 && ny>=0 && nx<SIZE && ny<SIZE && !hit(nx,ny)){
         p.x = nx;
         p.y = ny;
     }
 
-    // unlock AFTER movement cycle (this prevents spam/teleport feel)
-    setTimeout(()=>{
-        moveLock = false;
-    }, 180);
-
     checkWin();
 }
 
-// 🏁 WIN CHECK (FORCE FIXED)
+// WIN CHECK
 function checkWin(){
 
     if(gameEnded) return;
@@ -118,35 +93,20 @@ function checkWin(){
 
         gameEnded = true;
 
-        // STOP EVERYTHING IMMEDIATELY
-        clearInterval(enemyLoop);
-
-        const flagBox = document.getElementById("flag");
+        clearInterval(loop);
 
         fetch("api/flag.json")
         .then(res => res.json())
         .then(data => {
-
-            flagBox.style.display = "block";
-            flagBox.innerText = "ACCESS GRANTED: " + data.flag;
-
-        })
-        .catch(() => {
-            flagBox.style.display = "block";
-            flagBox.innerText = "ACCESS GRANTED: ERROR_LOADING_FLAG";
+            const f = document.getElementById("flag");
+            f.style.display = "block";
+            f.innerText = "ACCESS GRANTED: " + data.flag;
         });
+
     }
 }
 
-// ⌨️ KEYBOARD
-document.addEventListener("keydown", (e)=>{
-    if(e.key==="ArrowUp") movePlayer("up");
-    if(e.key==="ArrowDown") movePlayer("down");
-    if(e.key==="ArrowLeft") movePlayer("left");
-    if(e.key==="ArrowRight") movePlayer("right");
-});
-
-// 👾 ENEMY BFS
+// enemy AI
 function getNextMove(){
     let queue=[[e.x,e.y,[]]];
     let visited=new Set();
@@ -176,7 +136,7 @@ function getNextMove(){
     return [0,0];
 }
 
-// 💀 ENEMY MOVE
+// enemy move
 function moveEnemy(){
 
     if(gameEnded) return;
@@ -199,8 +159,8 @@ function moveEnemy(){
     }
 }
 
-// LOOP
-let enemyLoop = setInterval(()=>{
+// loop
+let loop = setInterval(()=>{
     moveEnemy();
     draw();
 },120);
