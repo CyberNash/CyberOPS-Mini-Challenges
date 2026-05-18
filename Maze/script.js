@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 const SIZE = 30;
 let tile;
 
-// responsive canvas
+// responsive canvas (mobile + PC friendly)
 function resize(){
     const size = Math.min(window.innerWidth * 0.92, 420);
     canvas.width = size;
@@ -18,12 +18,14 @@ window.addEventListener("resize", resize);
 // GAME STATE
 let gameEnded = false;
 
-// entities
+// player / goal / enemy
 let p = {x:0, y:0};
 let g = {x:29, y:29};
 let e = {x:26, y:28};
 
-// walls
+// =====================
+// MAZE WALLS
+// =====================
 let walls = [];
 
 for(let y=0;y<SIZE;y++){
@@ -43,7 +45,9 @@ function hit(x,y){
     return walls.some(w=>w.x===x&&w.y===y);
 }
 
+// =====================
 // DRAW
+// =====================
 function draw(){
     ctx.fillStyle="#111827";
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -63,7 +67,9 @@ function draw(){
     ctx.fillRect(p.x*tile,p.y*tile,tile,tile);
 }
 
-// MOVE PLAYER (1 STEP ONLY)
+// =====================
+// PLAYER MOVE (1 STEP ONLY)
+// =====================
 function move(dir){
 
     if(gameEnded) return;
@@ -84,7 +90,9 @@ function move(dir){
     checkWin();
 }
 
-// WIN + API FETCH (FIXED PATH)
+// =====================
+// WIN CONDITION + API FETCH
+// =====================
 function checkWin(){
 
     if(gameEnded) return;
@@ -96,7 +104,8 @@ function checkWin(){
 
         const flagBox = document.getElementById("flag");
 
-        fetch("./api/data.json")   // ✅ FIXED FOR GITHUB PAGES
+        // ✅ CORRECT PATH FOR YOUR MAZE FOLDER
+        fetch("api/data.json")
         .then(res => {
             if(!res.ok){
                 throw new Error("HTTP " + res.status);
@@ -120,7 +129,9 @@ function checkWin(){
     }
 }
 
+// =====================
 // ENEMY AI (BFS)
+// =====================
 function getNextMove(){
     let queue=[[e.x,e.y,[]]];
     let visited=new Set();
@@ -150,7 +161,9 @@ function getNextMove(){
     return [0,0];
 }
 
+// =====================
 // ENEMY MOVE
+// =====================
 function moveEnemy(){
 
     if(gameEnded) return;
@@ -173,14 +186,16 @@ function moveEnemy(){
     }
 }
 
-// LOOP
+// =====================
+// GAME LOOP
+// =====================
 let loop = setInterval(()=>{
     moveEnemy();
     draw();
 },120);
 
 // =====================
-// KEYBOARD FIX
+// KEYBOARD CONTROLS (FIXED)
 // =====================
 document.body.tabIndex = 0;
 document.body.focus();
@@ -189,14 +204,11 @@ document.addEventListener("keydown", function(e){
 
     if(gameEnded) return;
 
-    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)){
-        e.preventDefault();
-    }
-
     if(e.key === "ArrowUp") move("up");
     if(e.key === "ArrowDown") move("down");
     if(e.key === "ArrowLeft") move("left");
     if(e.key === "ArrowRight") move("right");
 });
 
+// initial draw
 draw();
