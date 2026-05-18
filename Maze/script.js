@@ -15,10 +15,10 @@ function resize(){
 resize();
 window.addEventListener("resize", resize);
 
-// game state
+// GAME STATE
 let gameEnded = false;
 
-// player / goal / enemy
+// entities
 let p = {x:0, y:0};
 let g = {x:29, y:29};
 let e = {x:26, y:28};
@@ -43,7 +43,7 @@ function hit(x,y){
     return walls.some(w=>w.x===x&&w.y===y);
 }
 
-// draw
+// DRAW
 function draw(){
     ctx.fillStyle="#111827";
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -63,7 +63,7 @@ function draw(){
     ctx.fillRect(p.x*tile,p.y*tile,tile,tile);
 }
 
-// MOVE
+// MOVE PLAYER (1 STEP ONLY)
 function move(dir){
 
     if(gameEnded) return;
@@ -84,7 +84,7 @@ function move(dir){
     checkWin();
 }
 
-// WIN + API CALL (UPDATED)
+// WIN + API FETCH (FIXED PATH)
 function checkWin(){
 
     if(gameEnded) return;
@@ -96,7 +96,7 @@ function checkWin(){
 
         const flagBox = document.getElementById("flag");
 
-        fetch("/api/data.json")   // ✅ YOUR CORRECT FILE
+        fetch("./api/data.json")   // ✅ FIXED FOR GITHUB PAGES
         .then(res => {
             if(!res.ok){
                 throw new Error("HTTP " + res.status);
@@ -111,7 +111,7 @@ function checkWin(){
         })
         .catch(err => {
 
-            console.log("FLAG LOAD ERROR:", err);
+            console.log("FLAG ERROR:", err);
 
             flagBox.style.display = "block";
             flagBox.innerText = "ACCESS GRANTED: ERROR LOADING FLAG";
@@ -120,7 +120,7 @@ function checkWin(){
     }
 }
 
-// ENEMY AI
+// ENEMY AI (BFS)
 function getNextMove(){
     let queue=[[e.x,e.y,[]]];
     let visited=new Set();
@@ -179,7 +179,9 @@ let loop = setInterval(()=>{
     draw();
 },120);
 
+// =====================
 // KEYBOARD FIX
+// =====================
 document.body.tabIndex = 0;
 document.body.focus();
 
