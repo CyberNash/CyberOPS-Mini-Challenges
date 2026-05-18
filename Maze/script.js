@@ -15,7 +15,7 @@ function resize(){
 resize();
 window.addEventListener("resize", resize);
 
-// GAME STATE
+// game state
 let gameEnded = false;
 
 // player / goal / enemy
@@ -43,7 +43,7 @@ function hit(x,y){
     return walls.some(w=>w.x===x&&w.y===y);
 }
 
-// DRAW
+// draw
 function draw(){
     ctx.fillStyle="#111827";
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -63,7 +63,7 @@ function draw(){
     ctx.fillRect(p.x*tile,p.y*tile,tile,tile);
 }
 
-// MOVE (1 STEP ONLY)
+// MOVE
 function move(dir){
 
     if(gameEnded) return;
@@ -84,7 +84,7 @@ function move(dir){
     checkWin();
 }
 
-// WIN CHECK
+// WIN + API CALL (UPDATED)
 function checkWin(){
 
     if(gameEnded) return;
@@ -94,14 +94,29 @@ function checkWin(){
         gameEnded = true;
         clearInterval(loop);
 
-        fetch("./api/flag.json")
-        .then(res => res.json())
-        .then(data => {
-            const f = document.getElementById("flag");
-            f.style.display = "block";
-            f.innerText = "ACCESS GRANTED: " + data.flag;
-        });
+        const flagBox = document.getElementById("flag");
 
+        fetch("/api/data.json")   // ✅ YOUR CORRECT FILE
+        .then(res => {
+            if(!res.ok){
+                throw new Error("HTTP " + res.status);
+            }
+            return res.json();
+        })
+        .then(data => {
+
+            flagBox.style.display = "block";
+            flagBox.innerText = "ACCESS GRANTED: " + data.flag;
+
+        })
+        .catch(err => {
+
+            console.log("FLAG LOAD ERROR:", err);
+
+            flagBox.style.display = "block";
+            flagBox.innerText = "ACCESS GRANTED: ERROR LOADING FLAG";
+
+        });
     }
 }
 
@@ -164,9 +179,7 @@ let loop = setInterval(()=>{
     draw();
 },120);
 
-// ==========================
-// KEYBOARD FIX (THIS IS KEY)
-// ==========================
+// KEYBOARD FIX
 document.body.tabIndex = 0;
 document.body.focus();
 
