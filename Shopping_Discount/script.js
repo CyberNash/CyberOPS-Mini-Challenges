@@ -61,7 +61,7 @@ function payNow(){
         .then(res => res.json())
         .then(data => {
             document.getElementById("msg").innerText =
-            "🧾 PAYMENT VERIFIED\n" + data.flag;
+            "PAID\n" + data.flag;
         })
         .catch(() => {
             document.getElementById("msg").innerText =
