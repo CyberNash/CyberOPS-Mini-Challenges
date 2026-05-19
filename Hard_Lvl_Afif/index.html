@@ -2,115 +2,296 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CyberOPS Signal Recovery Terminal</title>
-
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700&display=swap" rel="stylesheet">
 <style>
-body {
-    margin: 0;
-    background: #050814;
-    font-family: monospace;
-    color: #22c55e;
+  :root {
+    --bg: #050814;
+    --surface: #0b1120;
+    --panel: #0f1a2e;
+    --border: #1a2d4a;
+    --green: #22c55e;
+    --cyan: #38bdf8;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --blue: #3b82f6;
+    --text: #c8d8ea;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 20px;
-}
+    align-items: flex-start;
+    padding: 24px 14px 40px;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% 0%, rgba(56,189,248,0.07) 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(56,189,248,0.025) 39px, rgba(56,189,248,0.025) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(56,189,248,0.025) 39px, rgba(56,189,248,0.025) 40px);
+  }
 
-.container {
+  .terminal {
     width: 100%;
-    max-width: 500px;
-    background: #0f172a;
-    padding: 15px;
-    border-radius: 12px;
-}
+    max-width: 520px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(56,189,248,0.07), 0 0 120px rgba(34,197,94,0.04);
+    animation: fadeIn 0.5s ease;
+  }
 
-h2 {
-    color: #38bdf8;
-    font-size: 14px;
-}
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-.panel {
-    background: #111827;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 8px;
-}
+  /* Titlebar */
+  .titlebar {
+    background: #070e1c;
+    border-bottom: 1px solid var(--border);
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+  .dot.r { background: #ef4444; }
+  .dot.y { background: #f59e0b; }
+  .dot.g { background: #22c55e; }
+  .titlebar-label {
+    margin-left: auto;
+    font-size: 10px;
+    color: #334d66;
+    letter-spacing: 2px;
+    font-family: 'Orbitron', monospace;
+  }
 
-.fragment {
+  /* Header */
+  .header {
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-family: 'Orbitron', monospace;
     font-size: 12px;
-    word-break: break-all;
-    color: #22c55e;
-    margin-top: 5px;
-}
-
-input {
-    width: 100%;
-    padding: 8px;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-shadow: 0 0 18px rgba(56,189,248,0.5);
+    line-height: 1.6;
+  }
+  .header .mission {
     margin-top: 8px;
-    border-radius: 6px;
-    border: none;
-    background: #0b1220;
-    color: white;
-}
+    font-size: 11px;
+    color: #3d5a73;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+  }
 
-button {
+  /* Body */
+  .body { padding: 16px 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* Panels */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .panel-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .panel-label .dot-live {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 6px var(--cyan);
+    animation: blink 1.8s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+  .hint-list {
+    list-style: none;
+    font-size: 12px;
+    color: #4a7090;
+    line-height: 2.2;
+  }
+  .hint-list li::before { content: '▸  '; color: var(--amber); }
+  .hint-list .val { color: var(--amber); }
+
+  /* Input */
+  .input-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #3d5a73;
+    margin-bottom: 8px;
+  }
+  input {
+    width: 100%;
+    padding: 13px 14px;
+    background: #070e1c;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: white;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  input:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 2px rgba(56,189,248,0.1);
+  }
+  button {
     width: 100%;
     margin-top: 10px;
-    padding: 10px;
+    padding: 14px;
+    background: var(--blue);
     border: none;
-    border-radius: 8px;
-    background: #3b82f6;
+    border-radius: 7px;
     color: white;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
     cursor: pointer;
-}
+    transition: background 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:hover, button:active {
+    background: #60a5fa;
+    box-shadow: 0 0 20px rgba(96,165,250,0.35);
+  }
 
-.log {
-    margin-top: 10px;
-    font-size: 12px;
-    color: #fbbf24;
-}
+  /* Log */
+  .log {
+    border-radius: 7px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    line-height: 2;
+    padding: 12px 14px;
+    display: none;
+  }
+  .log.success {
+    display: block;
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: var(--green);
+    text-shadow: 0 0 10px rgba(34,197,94,0.4);
+  }
+  .log.error {
+    display: block;
+    background: rgba(248,113,113,0.07);
+    border: 1px solid rgba(248,113,113,0.25);
+    color: var(--red);
+  }
+
+  /* Scanline overlay */
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
 </style>
 </head>
-
 <body>
+<div class="scanlines"></div>
+<div class="terminal">
 
-<div class="container">
+  <div class="titlebar">
+    <span class="dot r"></span>
+    <span class="dot y"></span>
+    <span class="dot g"></span>
+    <span class="titlebar-label">CYBEROPS // SRT-7</span>
+  </div>
 
-<h2>🛰 CYBEROPS SIGNAL RECOVERY TERMINAL</h2>
+  <div class="header">
+    <h1>🛰 SIGNAL RECOVERY TERMINAL</h1>
+    <div class="mission">MISSION › A corrupted satellite transmission has been intercepted.<br>Decrypt it and recover the hidden flag.</div>
+  </div>
 
-<div class="panel">
-MISSION: Restore corrupted satellite transmission
-</div>
+  <div class="body">
 
-<div class="panel">
-📡 SIGNAL FRAGMENT A (Base64 Layer)
-<div class="fragment">
-U1dGQ0pYV1pZV1pZV0dGSlhXWVdHSlpYWVdGSlhYV1pYV1c=
-</div>
-</div>
+    <div class="panel">
+      <div class="panel-label"><span class="dot-live"></span>INTEL BRIEFING</div>
+      <ul class="hint-list">
+        <li>The transmission was encoded in <span class="val">two layers</span></li>
+        <li>key: <span class="val">cyberops</span></li>
+        <li>Flag format: <span class="val">SMKBBS{...}</span></li>
+      </ul>
+    </div>
 
-<div class="panel">
-🔐 INPUT DECRYPTED MESSAGE
-<input id="answer" placeholder="Enter recovered flag">
-<button onclick="check()">SUBMIT</button>
-</div>
+    <div class="panel">
+      <div class="panel-label"><span class="dot-live"></span>INTERCEPTED TRANSMISSION</div>
+      <div style="background:#070e1c;border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--green);word-break:break-all;letter-spacing:0.5px;text-shadow:0 0 8px rgba(34,197,94,0.3);">
+        MDQpJzA8Cz42NTYsPi4pNjEmMSw1ITE/PCsnJj05NSEmPR8=
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:#3d5a73;">Encoded satellite transmission — decrypt this to recover the flag.</div>
+    </div>
 
-<div class="log" id="log"></div>
+    <div class="panel">
+      <div class="panel-label"><span class="dot-live"></span>SHA-256 VERIFICATION HASH</div>
+      <div style="background:#070e1c;border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--green);word-break:break-all;letter-spacing:0.5px;text-shadow:0 0 8px rgba(34,197,94,0.3);">
+        2ec3ed16e553e051cc8ee946385c0bd2ae18ade1d24a514351c210ab706384bd
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:#3d5a73;">SHA-256 hash of the correct flag — use this to verify your answer.</div>
+    </div>
 
+    <div class="panel">
+      <div class="input-label">▸ ENTER RECOVERED FLAG</div>
+      <input id="answer" type="text" placeholder="SMKBBS{...}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <button onclick="check()">TRANSMIT</button>
+    </div>
+
+    <div class="log" id="log"></div>
+
+  </div>
 </div>
 
 <script>
-function check(){
-    let ans = document.getElementById("answer").value;
+// Flag is never stored in plaintext — only its SHA-256 hash is kept here.
+// Even if a player views source, they cannot reverse a hash to get the flag.
+const FLAG_HASH = "2ec3ed16e553e051cc8ee946385c0bd2ae18ade1d24a514351c210ab706384bd";
 
-    if(ans === "SMKBBS{MULTILAYER_SIGNAL_RECOVERED}"){
-        document.getElementById("log").innerHTML =
-        "🎉 SIGNAL RESTORED SUCCESSFULLY\nMISSION COMPLETE";
-    } else {
-        document.getElementById("log").innerHTML =
-        "❌ DECRYPTION FAILED\nTry analyzing signal layers again.";
-    }
+async function sha256(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
 }
-</script>
 
+async function check() {
+  const ans = document.getElementById("answer").value.trim();
+  const log = document.getElementById("log");
+  const hash = await sha256(ans);
+  if (hash === FLAG_HASH) {
+    log.className = "log success";
+    log.innerHTML = "✔ SIGNAL RESTORED SUCCESSFULLY<br>▸ MISSION COMPLETE — FLAG ACCEPTED";
+  } else {
+    log.className = "log error";
+    log.innerHTML = "✘ DECRYPTION FAILED<br>▸ Analyze the transmission layers and try again.";
+  }
+}
+
+document.getElementById("answer").addEventListener("keydown", e => {
+  if (e.key === "Enter") check();
+});
+</script>
 </body>
 </html>
